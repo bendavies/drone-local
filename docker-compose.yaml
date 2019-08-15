@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:11-alpine
+    environment:
+      - POSTGRES_DB=drone
+      - POSTGRES_USER=drone
+      - POSTGRES_PASSWORD=drone
+    volumes:
+      # - drone-db-data:/var/lib/postgresql/data:rw
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+       - ./docker/db/data:/var/lib/postgresql/data:rw
+    ports:
+      - "5556:5432"
+
+  drone:
+    image: drone/drone:1
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env.sample
+      - .env
+
+#volumes:
+#  drone-db-data: {}
