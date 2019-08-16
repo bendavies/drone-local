@@ -16,6 +16,34 @@ steps:
       - sleep 10
       - echo done
 
+  - name: test2
+    image: alpine
+    commands:
+      - echo run test2
+      - sleep 10
+      - echo done
+
+  - name: test3
+    image: alpine
+    commands:
+      - echo run test3
+      - sleep 10
+      - echo done
+
+  - name: test4
+    image: alpine
+    commands:
+      - echo run test4
+      - sleep 10
+      - echo done
+
+  - name: test5
+    image: alpine
+    commands:
+      - echo run test5
+      - sleep 10
+      - echo done
+
   - name: final
     image: alpine
     commands:
@@ -23,3 +51,7 @@ steps:
     depends_on:
       - build
       - test
+      - test2
+      - test3
+      - test4
+      - test5
