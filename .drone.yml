@@ -2,48 +2,23 @@ kind: pipeline
 name: build
 
 steps:
+
   - name: build
-    image: alpine
+    image: docker:latest
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
     commands:
-      - echo build code
-      - sleep 10
-      - echo done
+      - env
+      - DOCKER_BUILDKIT=1 docker build --progress plain -t drone-server-local:${DRONE_COMMIT:0:6} -f Dockerfile .
 
   - name: test
-    image: alpine
+    image: drone-server-local:${DRONE_COMMIT:0:6}
     commands:
       - echo run test
-      - sleep 10
       - echo done
-
-  - name: test2
-    image: alpine
-    commands:
-      - echo run test2
-      - sleep 10
-      - echo done
-
-  - name: test3
-    image: alpine
-    commands:
-      - echo run test3
-      - sleep 10
-      - echo done
-
-  - name: test4
-    image: alpine
-    commands:
-      - echo run test4
-      - sleep 10
-      - echo fail
-      - exit 1
-
-  - name: test5
-    image: alpine
-    commands:
-      - echo run test5
-      - sleep 10
-      - echo done
+    depends_on:
+      - build
 
   - name: final
     image: alpine
@@ -52,7 +27,8 @@ steps:
     depends_on:
       - build
       - test
-      - test2
-      - test3
-      - test4
-      - test5
+
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
